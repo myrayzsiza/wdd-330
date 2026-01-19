@@ -1,7 +1,15 @@
-import { setLocalStorage, getLocalStorage, calculateDiscountedPrice, getDiscountBadgeHtml } from "./utils.mjs";
+import { setLocalStorage, getLocalStorage, calculateDiscountedPrice, getDiscountBadgeHtml, qs } from "./utils.mjs";
 import ProductData from "./ProductData.mjs";
 
-const dataSource = new ProductData("tents");
+// Determine category from the page URL or fall back to tents
+function getCategory() {
+  const path = window.location.pathname;
+  if (path.includes('backpack')) return 'backpacks';
+  if (path.includes('sleeping-bag') || path.includes('sleeping_bag')) return 'sleeping-bags';
+  return 'tents';
+}
+
+const dataSource = new ProductData(getCategory());
 
 function productDetailTemplate(product) {
   const discountBadge = getDiscountBadgeHtml(product.discount);
@@ -14,15 +22,13 @@ function productDetailTemplate(product) {
        </div>`
     : `<p class="product-card__price">$${product.FinalPrice}</p>`;
   
-  return `
-    ${discountBadge}
-    <h3>${product.Brand.Name}</h3>
-    <h2 class="divider">${product.NameWithoutBrand}</h2>
-    <img class="divider" src="${product.Image}" alt="${product.NameWithoutBrand}" />
-    ${priceHtml}
-    <p class="product__color">${product.Colors[0].ColorName}</p>
-    <p class="product__description">${product.DescriptionHtmlSimple}</p>
-  `;
+  return `${discountBadge}
+<h3>${product.Brand.Name}</h3>
+<h2 class="divider">${product.NameWithoutBrand}</h2>
+<img class="divider" src="${product.Image}" alt="${product.NameWithoutBrand}" />
+${priceHtml}
+<p class="product__color">${product.Colors[0].ColorName}</p>
+<p class="product__description">${product.DescriptionHtmlSimple}</p>`;
 }
 
 function addProductToCart(product) {
@@ -34,13 +40,41 @@ function addProductToCart(product) {
   setLocalStorage("so-cart", cart);
 }
 
+// Render product details dynamically
+async function renderProductDetail() {
+  const productElement = qs(".product-detail");
+  const addToCartBtn = qs("#addToCart");
+  
+  if (productElement && addToCartBtn) {
+    const productId = addToCartBtn.dataset.id;
+    
+    try {
+      const product = await dataSource.findProductById(productId);
+      if (product) {
+        // Insert template content before the add to cart button div
+        const templateHtml = productDetailTemplate(product);
+        addToCartBtn.parentElement.insertAdjacentHTML('beforebegin', templateHtml);
+      }
+    } catch (error) {
+      console.error("Error rendering product details:", error);
+    }
+  }
+}
+
 // add to cart button event handler
 async function addToCartHandler(e) {
   const product = await dataSource.findProductById(e.target.dataset.id);
   addProductToCart(product);
 }
 
-// add listener to Add to Cart button
-document
-  .getElementById("addToCart")
-  .addEventListener("click", addToCartHandler);
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", async () => {
+  // First render the template if we have a product element
+  await renderProductDetail();
+  
+  // Then attach listener to Add to Cart button
+  const addToCartBtn = qs("#addToCart");
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener("click", addToCartHandler);
+  }
+});
