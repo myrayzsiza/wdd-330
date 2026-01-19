@@ -1,9 +1,12 @@
-import ProductData from './ProductData.mjs';
-import ProductList from './ProductList.mjs';
-import { qs } from './utils.mjs';
+import ProductList from "./ProductList.mjs";
+import { loadHeaderFooter } from "./utils.mjs";
 
-const dataSource = new ProductData('tents');
-const listElement = qs('.product-list');
-const productList = new ProductList('tents', dataSource, listElement);
+// This will load header and footer
+loadHeaderFooter();
 
-productList.init();
+// product listing for tents    
+const listElement = document.querySelector(".product-list");
+if (listElement) {
+  const tentsList = new ProductList("tents", listElement);
+  tentsList.init();
+}
