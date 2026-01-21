@@ -27,4 +27,7 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    allowedHosts: ["wdd-330-hlrp.onrender.com"],
+  },
 });
