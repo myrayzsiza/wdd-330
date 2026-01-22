@@ -14,13 +14,24 @@ export default class ProductData {
       ? `../public/json/${category}`
       : `../public/json/${category}.json`;
   }
+  
   getData() {
     return fetch(this.path)
       .then(convertToJson)
-      .then((data) => data);
+      .then((data) => {
+        // Handle both array format (tents.json) and API format with Result property
+        if (Array.isArray(data)) {
+          return data;
+        } else if (data.Result && Array.isArray(data.Result)) {
+          return data.Result;
+        }
+        return [];
+      });
   }
+  
   async findProductById(id) {
     const products = await this.getData();
     return products.find((item) => item.Id === id);
   }
 }
+

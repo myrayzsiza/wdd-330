@@ -31,7 +31,7 @@ export default class ProductList {
     const normalized = list.map((p) => ({
       name: p.Name || p.NameWithoutBrand || "",
       description: p.DescriptionHtmlSimple || "",
-      image: p.Image || p.Images?.PrimaryMedium || "",
+      image: p.Image || p.Images?.PrimaryLarge || p.Images?.PrimaryMedium || "",
       price: (p.FinalPrice ?? p.ListPrice ?? p.SuggestedRetailPrice) || "",
       brand: p.Brand?.Name || "",
     }));
@@ -39,3 +39,4 @@ export default class ProductList {
     renderListWithTemplate(productCardTemplate, this.listElement, normalized, "beforeend", true);
   }
 }
+
