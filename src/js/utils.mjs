@@ -24,14 +24,19 @@ export function setClick(selector, callback) {
 
 // Render a list of items using a template function into a parent element
 export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
-  if (!parentElement) return;
+  if (!parentElement) {
+    console.warn("renderListWithTemplate: parentElement is null or undefined");
+    return;
+  }
   
   const html = list.map((item) => templateFn(item)).join("");
   
-  // Always clear for "afterbegin" position to prevent duplication
+  // Always clear for "afterbegin" or "beforeend" position to prevent duplication
   if (clear || position === "afterbegin" || position === "beforeend") {
+    console.log(`renderListWithTemplate: Using innerHTML to replace content (${list.length} items, position=${position})`);
     parentElement.innerHTML = html;
   } else {
+    console.log(`renderListWithTemplate: Using insertAdjacentHTML with position=${position} (${list.length} items)`);
     parentElement.insertAdjacentHTML(position, html);
   }
 }
