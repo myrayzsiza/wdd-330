@@ -53,11 +53,16 @@ export async function loadTemplate(url) {
 // Insert a single template into the DOM at a specified element
 export function renderWithTemplate(template, parentElement, position = "afterbegin") {
   if (!parentElement) return;
-  parentElement.insertAdjacentHTML(position, template);
+  if (position === "afterbegin") {
+    parentElement.innerHTML = template;
+  } else {
+    parentElement.insertAdjacentHTML(position, template);
+  }
 }
 
 // Load header and footer templates and render them
 export async function loadHeaderFooter() {
+  console.log("loadHeaderFooter called");
   const headerTemplate = await loadTemplate("/public/partials/header.html");
   const footerTemplate = await loadTemplate("/public/partials/footer.html");
 
@@ -65,9 +70,9 @@ export async function loadHeaderFooter() {
   const footerElement = qs("#main-footer");
 
   if (headerElement) {
-    renderWithTemplate(headerTemplate, headerElement, "afterbegin");
+    headerElement.innerHTML = headerTemplate;
   }
   if (footerElement) {
-    renderWithTemplate(footerTemplate, footerElement, "afterbegin");
+    footerElement.innerHTML = footerTemplate;
   }
 }
