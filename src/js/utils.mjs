@@ -25,9 +25,15 @@ export function setClick(selector, callback) {
 // Render a list of items using a template function into a parent element
 export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
   if (!parentElement) return;
-  if (clear) parentElement.innerHTML = "";
+  
   const html = list.map((item) => templateFn(item)).join("");
-  parentElement.insertAdjacentHTML(position, html);
+  
+  // Always clear for "afterbegin" position to prevent duplication
+  if (clear || position === "afterbegin" || position === "beforeend") {
+    parentElement.innerHTML = html;
+  } else {
+    parentElement.insertAdjacentHTML(position, html);
+  }
 }
 
 // get a parameter from the URL query string
@@ -53,7 +59,12 @@ export async function loadTemplate(url) {
 // Insert a single template into the DOM at a specified element
 export function renderWithTemplate(template, parentElement, position = "afterbegin") {
   if (!parentElement) return;
+  
+  // Always use innerHTML to replace content, preventing duplication
   if (position === "afterbegin") {
+    parentElement.innerHTML = template;
+  } else if (position === "beforeend") {
+    // For beforeend, still replace content to prevent duplication
     parentElement.innerHTML = template;
   } else {
     parentElement.insertAdjacentHTML(position, template);
@@ -61,8 +72,16 @@ export function renderWithTemplate(template, parentElement, position = "afterbeg
 }
 
 // Load header and footer templates and render them
+let headerFooterLoaded = false;
 export async function loadHeaderFooter() {
-  console.log("loadHeaderFooter called");
+  if (headerFooterLoaded) {
+    console.log("loadHeaderFooter already called - skipping duplicate call");
+    return;
+  }
+  
+  headerFooterLoaded = true;
+  console.log("loadHeaderFooter called - loading templates");
+  
   const headerTemplate = await loadTemplate("/public/partials/header.html");
   const footerTemplate = await loadTemplate("/public/partials/footer.html");
 
@@ -71,8 +90,10 @@ export async function loadHeaderFooter() {
 
   if (headerElement) {
     headerElement.innerHTML = headerTemplate;
+    console.log("Header template rendered");
   }
   if (footerElement) {
     footerElement.innerHTML = footerTemplate;
+    console.log("Footer template rendered");
   }
 }
