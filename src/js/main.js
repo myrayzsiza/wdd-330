@@ -10,7 +10,7 @@ console.log("Homepage loaded - category cards are static");
 import Alert from "./Alert.js"; // Import the Alert class
 
 // Load alerts from alerts.json
-fetch("./alerts.json")
+fetch("public/json/alerts.json")
   .then(response => response.json())
   .then(data => {
     const alert = new Alert(data); // Create an instance
