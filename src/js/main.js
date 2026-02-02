@@ -7,7 +7,7 @@ loadHeaderFooter();
 // No product rendering needed here
 console.log("Homepage loaded - category cards are static");
 
-import Alert from "./alert.js"; // Import the Alert class
+import Alert from "./alert.js"; // Use lowercase filename to match actual file
 
 // Load alerts from alerts.json
 fetch("public/json/alerts.json")
