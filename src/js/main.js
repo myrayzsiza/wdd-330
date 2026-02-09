@@ -1,19 +1,3 @@
-import { loadHeaderFooter } from "./utils.mjs";
+import {loadHeaderFooter} from "./utils.mjs";
 
-// This will load header and footer
 loadHeaderFooter();
-
-// The homepage displays static category cards
-// No product rendering needed here
-console.log("Homepage loaded - category cards are static");
-
-import Alert from "./alert.js"; // Use lowercase filename to match actual file
-
-// Load alerts from alerts.json
-fetch("public/json/alerts.json")
-  .then(response => response.json())
-  .then(data => {
-    const alert = new Alert(data); // Create an instance
-    alert.render();                // Render alerts to the page
-  })
-  .catch(err => console.error("Error loading alerts:", err));

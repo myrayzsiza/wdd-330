@@ -1,29 +1,21 @@
+import ExternalServices from "./ExternalServices.mjs";
 import ProductList from "./ProductList.mjs";
-import ProductData from "./ProductData.mjs";
 import { loadHeaderFooter, getParam } from "./utils.mjs";
 
-// Load header and footer
 loadHeaderFooter();
 
-// Get category from URL parameter
-const category = getParam("category") || "tents";
+const category = getParam("category");
 
-// Update page title
-const categoryNames = {
-  tents: "Tents",
-  backpacks: "Backpacks",
-  "sleeping-bags": "Sleeping Bags",
-  hammocks: "Hammocks"
-};
+const dataSource = new ExternalServices(); 
 
-const titleElement = document.querySelector("#category-title");
-if (titleElement) {
-  titleElement.textContent = categoryNames[category] || category;
-}
-
-// Load and display products
 const listElement = document.querySelector(".product-list");
-if (listElement) {
-  const productList = new ProductList(category, new ProductData(category), listElement);
-  productList.init();
+
+const titleElement = document.querySelector("#category-name");
+if (titleElement) {
+  titleElement.textContent = category.charAt(0).toUpperCase() + category.slice(1);
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  const productList = new ProductList(category, dataSource, listElement);
+  productList.init();
+});
